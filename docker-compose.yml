@@ -4,29 +4,29 @@ services:
     network_mode: bridge
     image: aerokube/selenoid:latest-release
     volumes:
-      - "~/orbitz/selenoid:/etc/selenoid"
+      - "./selenoid:/etc/selenoid"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "~/orbitz/selenoid/video:/opt/selenoid/video"
-      - "~/orbitz/selenoid/logs:/opt/selenoid/logs"
+      - "./selenoid/video:/opt/selenoid/video"
+      - "./selenoid/logs:/opt/selenoid/logs"
     environment:
       - OVERRIDE_VIDEO_OUTPUT_DIR=/path/to/config/video
     command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs"]
     ports:
       - "4444:4444"
   selenoid-ui:
-    image: "aerokube/selenoid-ui"
     network_mode: bridge
+    image: "aerokube/selenoid-ui"
     links:
       - selenoid
     ports:
       - "8080:8080"
     command: ["--selenoid-uri", "http://selenoid:4444"]
-#  testing:
-#    network_mode: host
-#    image: python:orbitz-test
-#    build:
-#      context: ./
-#      dockerfile: Dockerfile
-#    volumes:
-#      - ./:/var/job
-#    working_dir: /var/job/
+  # testing:
+  #   image: python:orbitz-test
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./:/var/job
+  #   working_dir: /var/job/
+  #   command: [ "pytest", "-s", "--server=host.docker.internal", "--port=4444", "--cap_file=cap.py" ]
